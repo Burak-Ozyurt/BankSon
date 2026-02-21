@@ -2,6 +2,7 @@ module com.sau.bankproject {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql; // Veritabanı (PostgreSQL) için gerekli
+    requires org.postgresql.jdbc;
 
     // Bu satır çok önemli: Controller paketini fxml'e açıyoruz
     opens com.sau.bankproject.Controller to javafx.fxml;
