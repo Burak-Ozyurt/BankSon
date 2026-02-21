@@ -12,7 +12,7 @@ public class CustomerCRUD {
     public Optional<Customer> getCustomerById(int id) {
         Customer customer = null;
         // Tablo adını "Customer" olarak güncelledik
-        String query = "SELECT * FROM \"Customer\" WHERE customerid = ?";
+        String query = "SELECT * FROM \"customer\" WHERE customerid = ?";
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS);
              PreparedStatement pstmt = connection.prepareStatement(query)) {
 
@@ -21,7 +21,7 @@ public class CustomerCRUD {
 
             if (resultSet.next()) {
                 customer = new Customer();
-                customer.setId(resultSet.getInt("id"));
+                customer.setId(resultSet.getInt("customerid"));
                 customer.setName(resultSet.getString("name"));
                 customer.setAddress(resultSet.getString("address"));
                 customer.setCity(resultSet.getString("city"));
@@ -35,7 +35,7 @@ public class CustomerCRUD {
     public int insertCustomerById(Customer customer) {
         if(getCustomerById(customer.getId()).isPresent()) return -1;
 
-        String query = "INSERT INTO \"Customer\" (customerid, name, address, city) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO \"customer\" (customerid, name, address, city) VALUES (?, ?, ?, ?)";
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS);
              PreparedStatement pstmt = connection.prepareStatement(query)) {
 
@@ -51,7 +51,7 @@ public class CustomerCRUD {
     }
 
     public int updateCustomerById(Customer customer) {
-        String query = "UPDATE \"Customer\" SET name = ?, address = ?, city = ? WHERE customerid = ?";
+        String query = "UPDATE \"customer\" SET name = ?, address = ?, city = ? WHERE customerid = ?";
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS);
              PreparedStatement pstmt = connection.prepareStatement(query)) {
 
@@ -67,7 +67,7 @@ public class CustomerCRUD {
     }
 
     public int deleteCustomerById(int id) {
-        String query = "DELETE FROM \"Customer\" WHERE customerid = ?";
+        String query = "DELETE FROM \"customer\" WHERE customerid = ?";
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS);
              PreparedStatement pstmt = connection.prepareStatement(query)) {
 
