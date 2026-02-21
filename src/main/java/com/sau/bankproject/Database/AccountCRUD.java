@@ -14,7 +14,7 @@ public class AccountCRUD {
         Account account = null;
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
             Statement statement = connection.createStatement();
-            String query = "SELECT * FROM account WHERE id = " + id;
+            String query = "SELECT * FROM Account WHERE accountid = " + id;
             ResultSet resultSet = statement.executeQuery(query);
             while (resultSet.next()) {
                 account = new Account();
@@ -35,7 +35,7 @@ public class AccountCRUD {
             if(getAccountById(account.getId()).isPresent()) {
                 result = -1; // Zaten var
             } else {
-                String query = "INSERT INTO account (id, branch, balance) VALUES (?, ?, ?)";
+                String query = "INSERT INTO Account (accountid, branch, balance) VALUES (?, ?, ?)";
                 try (PreparedStatement pstmt = connection.prepareStatement(query)) {
                     pstmt.setInt(1, account.getId());
                     pstmt.setString(2, account.getBranch());
@@ -53,7 +53,7 @@ public class AccountCRUD {
     public int deleteAccountById(int id) {
         int result = 0;
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            String query = "DELETE FROM account WHERE id = " + id;
+            String query = "DELETE FROM Account WHERE accountid = " + id;
             Statement statement = connection.createStatement();
             result = statement.executeUpdate(query);
         } catch (Exception e){
@@ -67,7 +67,7 @@ public class AccountCRUD {
         int result = 0;
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
             if(getAccountById(account.getId()).isPresent()) {
-                String query = "UPDATE account SET branch = ?, balance = ? WHERE id = ?";
+                String query = "UPDATE Account SET branch = ?, balance = ? WHERE accountid = ?";
                 try (PreparedStatement pstmt = connection.prepareStatement(query)) {
                     pstmt.setString(1, account.getBranch());
                     pstmt.setDouble(2, account.getBalance());
