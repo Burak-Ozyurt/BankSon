@@ -6,47 +6,22 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-
 import java.util.Optional;
 
 public class CustomerController {
 
-    @FXML
-    private TextField name;
-
-    @FXML
-    private TextField customerId;
-
-    @FXML
-    private TextField address;
-
-    // 1. Şehir için FXML bağlantısını ekle
-    @FXML
-    private TextField city;
-
-    @FXML
-    private Button clearCustomer;
-
-    @FXML
-    private Button close;
-
-    @FXML
-    private Button deleteCustomer;
-
-    @FXML
-    private Button getCustomer;
-
-    @FXML
-    private Button saveCustomer;
+    @FXML private TextField name;
+    @FXML private TextField customerId;
+    @FXML private TextField address;
+    @FXML private TextField city;
 
     @FXML
     void clearCustomer(ActionEvent event) {
-        customerId.setText("");
-        name.setText("");
-        address.setText("");
-        city.setText(""); // Temizleme işlemine ekle
+        customerId.clear();
+        name.clear();
+        address.clear();
+        city.clear();
     }
 
     @FXML
@@ -55,97 +30,91 @@ public class CustomerController {
     }
 
     @FXML
-    void deleteCustomer(ActionEvent event) {
-        checkId(customerId.getText(), event);
-        CustomerCRUD crudOperations = new CustomerCRUD();
-        int id = Integer.parseInt(customerId.getText());
-        int result = crudOperations.deleteCustomerById(id);
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Success");
-        alert.setHeaderText("Customer with id " + customerId.getText() + " deleted");
-        alert.showAndWait();
-        clearCustomer(event);
-    }
-
-    @FXML
     void getCustomer(ActionEvent event) {
-        checkId(customerId.getText(), event);
-        CustomerCRUD crudOperations = new CustomerCRUD();
+        if (!isIdValid()) return;
+
         int id = Integer.parseInt(customerId.getText());
-        Optional<Customer> customer = crudOperations.getCustomerById(id);
+        CustomerCRUD crud = new CustomerCRUD();
+        Optional<Customer> customer = crud.getCustomerById(id);
+
         if(customer.isPresent()){
-            customerId.setText(Integer.toString(customer.get().getId()));
             name.setText(customer.get().getName());
             address.setText(customer.get().getAddress());
-            city.setText(customer.get().getCity()); // Şehri ekrana yazdır
+            city.setText(customer.get().getCity());
         } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Customer with id " + id + " not found");
-            alert.showAndWait();
+            showAlert(Alert.AlertType.ERROR, "Error", "Customer with id " + id + " not found!");
         }
     }
 
     @FXML
     void saveCustomer(ActionEvent event) {
-        checkId(customerId.getText(), event);
-        Customer customer = new Customer();
-        customer.setId(Integer.parseInt(customerId.getText()));
-        customer.setName(name.getText());
-        customer.setAddress(address.getText());
-        customer.setCity(city.getText()); // Şehri nesneye set et
+        if (!isIdValid()) return;
 
-        CustomerCRUD crudOperations = new CustomerCRUD();
-        int res = crudOperations.insertCustomerById(customer);
-        if(res > 0){
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Success");
-            alert.setHeaderText("Customer with id " + customerId.getText() + " saved");
-            alert.showAndWait();
-        } else if(res == -1){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("There another customer with id: " + customerId.getText());
-            alert.showAndWait();
+        Customer c = new Customer(
+                Integer.parseInt(customerId.getText()),
+                name.getText(),
+                address.getText(),
+                city.getText()
+        );
+
+        int res = new CustomerCRUD().insertCustomerById(c);
+
+        if(res > 0) showAlert(Alert.AlertType.INFORMATION, "Success", "Customer saved successfully.");
+        else if(res == -1) showAlert(Alert.AlertType.ERROR, "Error", "This ID already exists!");
+        else showAlert(Alert.AlertType.ERROR, "Error", "Save failed!");
+    }
+
+    // HATA BURADAYDI: Bu metod eksik olduğu için FXML yüklenemiyordu
+    @FXML
+    void updateCustomer(ActionEvent event) {
+        if (!isIdValid()) return;
+
+        Customer c = new Customer(
+                Integer.parseInt(customerId.getText()),
+                name.getText(),
+                address.getText(),
+                city.getText()
+        );
+
+        int res = new CustomerCRUD().updateCustomerById(c);
+
+        if(res > 0) {
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Customer updated successfully.");
         } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Error on save customer!");
-            alert.showAndWait();
+            showAlert(Alert.AlertType.ERROR, "Error", "Update failed!");
         }
     }
 
     @FXML
-    void updateCustomer(ActionEvent event) {
-        checkId(customerId.getText(), event);
-        Customer customer = new Customer();
-        customer.setId(Integer.parseInt(customerId.getText()));
-        customer.setName(name.getText());
-        customer.setAddress(address.getText());
-        customer.setCity(city.getText()); // Şehri nesneye set et
+    void deleteCustomer(ActionEvent event) {
+        if (!isIdValid()) return;
 
-        CustomerCRUD crudOperations = new CustomerCRUD();
-        int res = crudOperations.updateCustomerById(customer);
-        if(res > 0){
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Success");
-            alert.setHeaderText("Customer with id " + customerId.getText() + " id updated");
-            alert.showAndWait();
+        int id = Integer.parseInt(customerId.getText());
+        int res = new CustomerCRUD().deleteCustomerById(id);
+
+        if (res > 0) {
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Customer deleted.");
+            clearCustomer(event);
         } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Error on update customer!");
-            alert.showAndWait();
+            showAlert(Alert.AlertType.ERROR, "Error", "Delete failed!");
         }
     }
 
-    public void checkId(String id, ActionEvent event) {
-        if (id.isEmpty() || Integer.parseInt(id) <= 0) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Id is wrong!");
-            alert.showAndWait();
-            clearCustomer(event);
+    // ID kutusunun boş veya geçersiz olmasını engelleyen kontrol
+    private boolean isIdValid() {
+        String idStr = customerId.getText();
+        if (idStr == null || idStr.trim().isEmpty() || !idStr.matches("\\d+")) {
+            showAlert(Alert.AlertType.ERROR, "Validation Error", "Please enter a valid numeric ID.");
+            return false;
         }
+        return true;
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }

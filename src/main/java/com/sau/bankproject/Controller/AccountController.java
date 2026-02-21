@@ -6,7 +6,6 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
 import java.util.Optional;
@@ -14,38 +13,19 @@ import java.util.Optional;
 public class AccountController {
 
     @FXML
-    private TextField accountId; // carId -> accountId
+    private TextField accountId;
 
     @FXML
-    private TextField balance; // brand -> balance (Örn: Bakiye)
+    private TextField branch; // FXML'deki fx:id="branch" ile eşleşmesi için 'type' yerine 'branch' yapıldı
 
     @FXML
-    private TextField type; // model -> type (Örn: Vadeli/Vadesiz)
-
-    @FXML
-    private TextField customerId; // plate -> customerId (Hesabın sahibi)
-
-    @FXML
-    private Button clearAccount;
-
-    @FXML
-    private Button close;
-
-    @FXML
-    private Button deleteAccount;
-
-    @FXML
-    private Button getAccount;
-
-    @FXML
-    private Button saveAccount;
+    private TextField balance;
 
     @FXML
     void clearAccount(ActionEvent event) {
-        accountId.setText("");
-        balance.setText("");
-        type.setText("");
-        customerId.setText("");
+        accountId.clear();
+        branch.clear();
+        balance.clear();
     }
 
     @FXML
@@ -55,95 +35,101 @@ public class AccountController {
 
     @FXML
     void deleteAccount(ActionEvent event) {
-        checkId(accountId.getText(), event);
-        AccountCRUD crudOperations = new AccountCRUD();
+        if (!isIdValid()) return; // ID geçersizse işlemi durdurur
+
         int id = Integer.parseInt(accountId.getText());
+        AccountCRUD crudOperations = new AccountCRUD();
         int result = crudOperations.deleteAccountById(id);
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Success");
-        alert.setHeaderText("Account with id " + id + " deleted");
-        alert.showAndWait();
-        clearAccount(event);
+        if (result > 0) {
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Account with id " + id + " deleted.");
+            clearAccount(event);
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Error", "Account could not be deleted.");
+        }
     }
 
     @FXML
     void getAccount(ActionEvent event) {
-        checkId(accountId.getText(), event);
-        AccountCRUD crudOperations = new AccountCRUD();
+        if (!isIdValid()) return;
+
         int id = Integer.parseInt(accountId.getText());
+        AccountCRUD crudOperations = new AccountCRUD();
         Optional<Account> account = crudOperations.getAccountById(id);
 
-        if(account.isPresent()){
+        if (account.isPresent()) {
             accountId.setText(Integer.toString(account.get().getId()));
-            balance.setText(String.valueOf(account.get().getBalance())); // DTO'na göre güncelle
-
+            branch.setText(account.get().getBranch()); // DTO'dan branch bilgisini çeker
+            balance.setText(Double.toString(account.get().getBalance()));
         } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Account with id " + id + " not found");
-            alert.showAndWait();
+            showAlert(Alert.AlertType.ERROR, "Error", "Account with id " + id + " not found.");
         }
     }
 
     @FXML
     void saveAccount(ActionEvent event) {
-        checkId(accountId.getText(), event);
-        Account account = new Account();
-        account.setId(Integer.parseInt(accountId.getText()));
-        account.setBalance(Double.parseDouble(balance.getText()));
+        if (!isIdValid()) return;
 
-        AccountCRUD crudOperations = new AccountCRUD();
-        int res = crudOperations.insertAccountById(account);
+        try {
+            Account account = new Account();
+            account.setId(Integer.parseInt(accountId.getText()));
+            account.setBranch(branch.getText()); // Şube bilgisini UI'dan alır
+            account.setBalance(Double.parseDouble(balance.getText()));
 
-        if(res > 0){
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Success");
-            alert.setHeaderText("Account with id " + accountId.getText() + " saved");
-            alert.showAndWait();
-        } else if(res == -1){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("There another account with id: " + accountId.getText());
-            alert.showAndWait();
-        } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Error on save account!");
-            alert.showAndWait();
+            AccountCRUD crudOperations = new AccountCRUD();
+            int res = crudOperations.insertAccountById(account);
+
+            if (res > 0) {
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Account saved.");
+            } else if (res == -1) {
+                showAlert(Alert.AlertType.ERROR, "Error", "An account with this ID already exists.");
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Error", "Save failed.");
+            }
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Please enter a valid balance.");
         }
     }
 
     @FXML
     void updateAccount(ActionEvent event) {
-        checkId(accountId.getText(), event);
-        Account account = new Account();
-        account.setId(Integer.parseInt(accountId.getText()));
-        account.setBalance(Double.parseDouble(balance.getText()));
+        if (!isIdValid()) return;
 
-        AccountCRUD crudOperations = new AccountCRUD();
-        int res = crudOperations.updateAccountById(account);
+        try {
+            Account account = new Account();
+            account.setId(Integer.parseInt(accountId.getText()));
+            account.setBranch(branch.getText());
+            account.setBalance(Double.parseDouble(balance.getText()));
 
-        if(res > 0){
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Success");
-            alert.setHeaderText("Account with id " + accountId.getText() + " updated");
-            alert.showAndWait();
-        } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Error on update account!");
-            alert.showAndWait();
+            AccountCRUD crudOperations = new AccountCRUD();
+            int res = crudOperations.updateAccountById(account);
+
+            if (res > 0) {
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Account updated.");
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Error", "Update failed.");
+            }
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Please enter a valid balance.");
         }
     }
 
-    public void checkId(String id, ActionEvent event) {
-        if (id.isEmpty() || Integer.parseInt(id) <= 0) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Id is wrong!");
-            alert.showAndWait();
-            clearAccount(event);
+    // ID kontrolü yapan ve hata varsa işlemi durduran yardımcı metod
+    private boolean isIdValid() {
+        String idText = accountId.getText();
+        if (idText == null || idText.trim().isEmpty() || !idText.matches("\\d+") || Integer.parseInt(idText) <= 0) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Please enter a valid positive ID.");
+            return false;
         }
+        return true;
+    }
+
+    // Alert göstermek için yardımcı metod
+    private void showAlert(Alert.AlertType type, String title, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }

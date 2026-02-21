@@ -4,7 +4,6 @@ import com.sau.bankproject.DTO.Customer;
 import java.sql.*;
 import java.util.Optional;
 
-
 public class CustomerCRUD {
     static final String DB_URL = "jdbc:postgresql://localhost:5432/Bank";
     static final String USER = "postgres";
@@ -12,76 +11,71 @@ public class CustomerCRUD {
 
     public Optional<Customer> getCustomerById(int id) {
         Customer customer = null;
-        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            Statement statement = connection.createStatement();
-            String query = "SELECT * FROM customer WHERE id = " + id;
-            ResultSet resultSet = statement.executeQuery(query);
-            while (resultSet.next()) {
+        // Tablo adını "Customer" olarak güncelledik
+        String query = "SELECT * FROM \"Customer\" WHERE customerid = ?";
+        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS);
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
+
+            pstmt.setInt(1, id);
+            ResultSet resultSet = pstmt.executeQuery();
+
+            if (resultSet.next()) {
                 customer = new Customer();
                 customer.setId(resultSet.getInt("id"));
                 customer.setName(resultSet.getString("name"));
                 customer.setAddress(resultSet.getString("address"));
                 customer.setCity(resultSet.getString("city"));
             }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return Optional.ofNullable(customer);
     }
 
     public int insertCustomerById(Customer customer) {
-        int result = 0;
-        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            Statement statement = connection.createStatement();
+        if(getCustomerById(customer.getId()).isPresent()) return -1;
 
-            // DÜZELTME: city için tırnak ve virgül eklemeleri yapıldı
-            String params = customer.getId() + ", " +
-                    "'" + customer.getName() + "', " +
-                    "'" + customer.getAddress() + "', " +
-                    "'" + customer.getCity() + "'";
+        String query = "INSERT INTO \"Customer\" (customerid, name, address, city) VALUES (?, ?, ?, ?)";
+        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS);
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
 
-            if(getCustomerById(customer.getId()).isPresent()) {
-                result = -1;
-            } else {
-                String query = "INSERT INTO customer (id, name, address, city) VALUES (" + params + ");";
-                result = statement.executeUpdate(query);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            pstmt.setInt(1, customer.getId());
+            pstmt.setString(2, customer.getName());
+            pstmt.setString(3, customer.getAddress());
+            pstmt.setString(4, customer.getCity());
+            return pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
         }
-        return result;
-    }
-
-    public int deleteCustomerById(int id) {
-        int result = 0;
-        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            Statement statement = connection.createStatement();
-            String query = "DELETE FROM customer WHERE id = " + id;
-            result = statement.executeUpdate(query);
-        } catch (Exception e){
-            throw new RuntimeException(e);
-        }
-        return result;
     }
 
     public int updateCustomerById(Customer customer) {
-        int result = 0;
-        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            Statement statement = connection.createStatement();
+        String query = "UPDATE \"Customer\" SET name = ?, address = ?, city = ? WHERE customerid = ?";
+        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS);
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
 
-            if(getCustomerById(customer.getId()).isPresent()) {
-                // DÜZELTME: city kolonu UPDATE sorgusuna eklendi
-                String query = "UPDATE customer SET " +
-                        "name = '" + customer.getName() + "', " +
-                        "address = '" + customer.getAddress() + "', " +
-                        "city = '" + customer.getCity() + "' " +
-                        "WHERE id = " + customer.getId() + ";";
-
-                result = statement.executeUpdate(query);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            pstmt.setString(1, customer.getName());
+            pstmt.setString(2, customer.getAddress());
+            pstmt.setString(3, customer.getCity());
+            pstmt.setInt(4, customer.getId());
+            return pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
         }
-        return result;
+    }
+
+    public int deleteCustomerById(int id) {
+        String query = "DELETE FROM \"Customer\" WHERE customerid = ?";
+        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS);
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
+
+            pstmt.setInt(1, id);
+            return pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 }

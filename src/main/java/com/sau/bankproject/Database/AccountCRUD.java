@@ -5,7 +5,7 @@ import java.sql.*;
 import java.util.Optional;
 
 public class AccountCRUD {
-    static final String DB_URL = "jdbc:postgresql://localhost:5432/cr26";
+    static final String DB_URL = "jdbc:postgresql://localhost:5432/Bank";
     static final String USER = "postgres";
     static final String PASS = "011025";
 
