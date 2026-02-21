@@ -12,18 +12,24 @@ public class AccountCRUD {
     // Bir hesabı ID ile getir
     public Optional<Account> getAccountById(int id) {
         Account account = null;
-        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            Statement statement = connection.createStatement();
-            String query = "SELECT * FROM Account WHERE accountid = " + id;
-            ResultSet resultSet = statement.executeQuery(query);
-            while (resultSet.next()) {
-                account = new Account();
-                account.setId(resultSet.getInt("accountid"));
-                account.setBranch(resultSet.getString("branch"));
-                account.setBalance(resultSet.getDouble("balance"));
+        // Tablo adı "account" olarak güncellendi
+        // Daha güvenli olan PreparedStatement kullanıldı
+        String query = "SELECT * FROM \"account\" WHERE accountid = ?";
+
+        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS);
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
+
+            pstmt.setInt(1, id);
+            try (ResultSet resultSet = pstmt.executeQuery()) {
+                if (resultSet.next()) {
+                    account = new Account();
+                    account.setId(resultSet.getInt("accountid"));
+                    account.setBranch(resultSet.getString("branch"));
+                    account.setBalance(resultSet.getDouble("balance"));
+                }
             }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return Optional.ofNullable(account);
     }
@@ -33,9 +39,10 @@ public class AccountCRUD {
         int result = 0;
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
             if(getAccountById(account.getId()).isPresent()) {
-                result = -1; // Zaten var
+                result = -1; // Hesap zaten mevcut
             } else {
-                String query = "INSERT INTO Account (accountid, branch, balance) VALUES (?, ?, ?)";
+                // Tablo adı "account" olarak güncellendi
+                String query = "INSERT INTO \"account\" (accountid, branch, balance) VALUES (?, ?, ?)";
                 try (PreparedStatement pstmt = connection.prepareStatement(query)) {
                     pstmt.setInt(1, account.getId());
                     pstmt.setString(2, account.getBranch());
@@ -52,12 +59,15 @@ public class AccountCRUD {
     // Hesabı sil
     public int deleteAccountById(int id) {
         int result = 0;
-        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
-            String query = "DELETE FROM Account WHERE accountid = " + id;
-            Statement statement = connection.createStatement();
-            result = statement.executeUpdate(query);
-        } catch (Exception e){
-            throw new RuntimeException(e);
+        // Tablo adı "account" olarak güncellendi ve PreparedStatement kullanıldı
+        String query = "DELETE FROM \"account\" WHERE accountid = ?";
+        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS);
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
+
+            pstmt.setInt(1, id);
+            result = pstmt.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
         }
         return result;
     }
@@ -67,7 +77,8 @@ public class AccountCRUD {
         int result = 0;
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
             if(getAccountById(account.getId()).isPresent()) {
-                String query = "UPDATE Account SET branch = ?, balance = ? WHERE accountid = ?";
+                // Tablo adı "account" olarak güncellendi
+                String query = "UPDATE \"account\" SET branch = ?, balance = ? WHERE accountid = ?";
                 try (PreparedStatement pstmt = connection.prepareStatement(query)) {
                     pstmt.setString(1, account.getBranch());
                     pstmt.setDouble(2, account.getBalance());
