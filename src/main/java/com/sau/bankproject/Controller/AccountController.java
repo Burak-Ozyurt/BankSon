@@ -13,7 +13,7 @@ import java.util.Optional;
 public class AccountController {
 
     @FXML
-    private TextField accountId;
+    private TextField accountid;
 
     @FXML
     private TextField branch; // FXML'deki fx:id="branch" ile eşleşmesi için 'type' yerine 'branch' yapıldı
@@ -23,7 +23,7 @@ public class AccountController {
 
     @FXML
     void clearAccount(ActionEvent event) {
-        accountId.clear();
+        accountid.clear();
         branch.clear();
         balance.clear();
     }
@@ -37,7 +37,7 @@ public class AccountController {
     void deleteAccount(ActionEvent event) {
         if (!isIdValid()) return; // ID geçersizse işlemi durdurur
 
-        int id = Integer.parseInt(accountId.getText());
+        int id = Integer.parseInt(accountid.getText());
         AccountCRUD crudOperations = new AccountCRUD();
         int result = crudOperations.deleteAccountById(id);
 
@@ -53,12 +53,12 @@ public class AccountController {
     void getAccount(ActionEvent event) {
         if (!isIdValid()) return;
 
-        int id = Integer.parseInt(accountId.getText());
+        int id = Integer.parseInt(accountid.getText());
         AccountCRUD crudOperations = new AccountCRUD();
         Optional<Account> account = crudOperations.getAccountById(id);
 
         if (account.isPresent()) {
-            accountId.setText(Integer.toString(account.get().getId()));
+            accountid.setText(Integer.toString(account.get().getId()));
             branch.setText(account.get().getBranch()); // DTO'dan branch bilgisini çeker
             balance.setText(Double.toString(account.get().getBalance()));
         } else {
@@ -72,7 +72,7 @@ public class AccountController {
 
         try {
             Account account = new Account();
-            account.setId(Integer.parseInt(accountId.getText()));
+            account.setId(Integer.parseInt(accountid.getText()));
             account.setBranch(branch.getText()); // Şube bilgisini UI'dan alır
             account.setBalance(Double.parseDouble(balance.getText()));
 
@@ -97,7 +97,7 @@ public class AccountController {
 
         try {
             Account account = new Account();
-            account.setId(Integer.parseInt(accountId.getText()));
+            account.setId(Integer.parseInt(accountid.getText()));
             account.setBranch(branch.getText());
             account.setBalance(Double.parseDouble(balance.getText()));
 
@@ -116,7 +116,7 @@ public class AccountController {
 
     // ID kontrolü yapan ve hata varsa işlemi durduran yardımcı metod
     private boolean isIdValid() {
-        String idText = accountId.getText();
+        String idText = accountid.getText();
         if (idText == null || idText.trim().isEmpty() || !idText.matches("\\d+") || Integer.parseInt(idText) <= 0) {
             showAlert(Alert.AlertType.ERROR, "Error", "Please enter a valid positive ID.");
             return false;
