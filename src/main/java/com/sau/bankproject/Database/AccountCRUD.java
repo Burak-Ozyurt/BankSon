@@ -18,7 +18,7 @@ public class AccountCRUD {
             ResultSet resultSet = statement.executeQuery(query);
             while (resultSet.next()) {
                 account = new Account();
-                account.setId(resultSet.getInt("id"));
+                account.setId(resultSet.getInt("accountid"));
                 account.setBranch(resultSet.getString("branch"));
                 account.setBalance(resultSet.getDouble("balance"));
             }

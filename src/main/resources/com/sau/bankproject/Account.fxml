@@ -12,7 +12,7 @@
         <Label layoutX="26.0" layoutY="50.0" text="BRANCH:" />
         <Label layoutX="26.0" layoutY="79.0" text="BALANCE:" />
 
-        <TextField fx:id="accountId" layoutX="89.0" layoutY="16.0" />
+        <TextField fx:id="accountid" layoutX="89.0" layoutY="16.0" />
         <TextField fx:id="branch" layoutX="89.0" layoutY="46.0" />
         <TextField fx:id="balance" layoutX="89.0" layoutY="76.0" />
 
