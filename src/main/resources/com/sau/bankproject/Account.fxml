@@ -18,9 +18,9 @@
 
         <Button fx:id="getAccount" layoutX="267.0" layoutY="16.0" mnemonicParsing="false" onAction="#getAccount" text="GET" />
 
-        <Button fx:id="saveAccount" layoutX="34.0" layoutY="139.0" mnemonicParsing="false" onAction="#saveAccount" text="SAVE" />
-        <Button fx:id="updateAccount" layoutX="96.0" layoutY="138.0" mnemonicParsing="false" onAction="#updateAccount" text="UPDATE" />
-        <Button fx:id="deleteAccount" layoutX="178.0" layoutY="138.0" mnemonicParsing="false" onAction="#deleteAccount" text="DELETE" />
+        <Button fx:id="saveAccount" layoutX="34.0" layoutY="140.0" mnemonicParsing="false" onAction="#saveAccount" text="SAVE" />
+        <Button fx:id="updateAccount" layoutX="96.0" layoutY="140.0" mnemonicParsing="false" onAction="#updateAccount" text="UPDATE" />
+        <Button fx:id="deleteAccount" layoutX="178.0" layoutY="140.0" mnemonicParsing="false" onAction="#deleteAccount" text="DELETE" />
 
         <Button fx:id="close" layoutX="259.0" layoutY="137.0" mnemonicParsing="false" onAction="#close" text="CLOSE" />
         <Button fx:id="clearAccount" layoutX="261.0" layoutY="77.0" mnemonicParsing="false" onAction="#clearAccount" text="CLEAR" />

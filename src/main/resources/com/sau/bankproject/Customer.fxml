@@ -15,10 +15,10 @@
     <TextField fx:id="address" layoutX="89.0" layoutY="76.0" />
     <TextField fx:id="city" layoutX="89.0" layoutY="106.0" /> <Button fx:id="getCustomer" layoutX="267.0" layoutY="16.0" mnemonicParsing="false" onAction="#getCustomer" text="GET" />
 
-    <Button fx:id="saveCustomer" layoutX="34.0" layoutY="160.0" mnemonicParsing="false" onAction="#saveCustomer" text="SAVE" />
-    <Button fx:id="updateCustomer" layoutX="96.0" layoutY="160.0" mnemonicParsing="false" onAction="#updateCustomer" text="UPDATE" />
-    <Button fx:id="deleteCustomer" layoutX="178.0" layoutY="160.0" mnemonicParsing="false" onAction="#deleteCustomer" text="DELETE" />
-    <Button fx:id="close" layoutX="259.0" layoutY="160.0" mnemonicParsing="false" onAction="#close" text="CLOSE" />
+    <Button fx:id="saveCustomer" layoutX="34.0" layoutY="140.0" mnemonicParsing="false" onAction="#saveCustomer" text="SAVE" />
+    <Button fx:id="updateCustomer" layoutX="96.0" layoutY="140.0" mnemonicParsing="false" onAction="#updateCustomer" text="UPDATE" />
+    <Button fx:id="deleteCustomer" layoutX="178.0" layoutY="140.0" mnemonicParsing="false" onAction="#deleteCustomer" text="DELETE" />
+    <Button fx:id="close" layoutX="259.0" layoutY="140.0" mnemonicParsing="false" onAction="#close" text="CLOSE" />
 
     <Button fx:id="clearCustomerr" layoutX="261.0" layoutY="77.0" mnemonicParsing="false" onAction="#clearCustomer" text="CLEAR" />
 </children>

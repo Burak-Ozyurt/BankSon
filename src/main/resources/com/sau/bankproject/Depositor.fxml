@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.sau.bankproject.Controller.DepositorController"
-            prefHeight="400.0" prefWidth="600.0">
+            prefHeight="220.0" prefWidth="350.0">
+    <children>
+        <Label layoutX="20.0" layoutY="20.0" text="Customer ID:" />
+        <TextField fx:id="customerIdField" layoutX="100.0" layoutY="16.0" prefWidth="160.0" promptText="Müşteri ID girin" />
+        <Button layoutX="270.0" layoutY="16.0" mnemonicParsing="false" onAction="#getCustomerAccounts" text="GET" />
 
+        <Label layoutX="20.0" layoutY="55.0" text="Müşterinin Hesapları:" />
+        <ListView fx:id="accountsListView" layoutX="20.0" layoutY="75.0" prefHeight="120.0" prefWidth="310.0" />
+    </children>
 </AnchorPane>
