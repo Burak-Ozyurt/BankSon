@@ -64,7 +64,6 @@ public class CustomerController {
         else showAlert(Alert.AlertType.ERROR, "Error", "Save failed!");
     }
 
-    // HATA BURADAYDI: Bu metod eksik olduğu için FXML yüklenemiyordu
     @FXML
     void updateCustomer(ActionEvent event) {
         if (!isIdValid()) return;

@@ -16,7 +16,7 @@ public class AccountController {
     private TextField accountid;
 
     @FXML
-    private TextField branch; // FXML'deki fx:id="branch" ile eşleşmesi için 'type' yerine 'branch' yapıldı
+    private TextField branch;
 
     @FXML
     private TextField balance;

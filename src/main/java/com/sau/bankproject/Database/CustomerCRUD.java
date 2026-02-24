@@ -11,7 +11,7 @@ public class CustomerCRUD {
 
     public Optional<Customer> getCustomerById(int id) {
         Customer customer = null;
-        // Tablo adını "Customer" olarak güncelledik
+
         String query = "SELECT * FROM \"customer\" WHERE customerid = ?";
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS);
              PreparedStatement pstmt = connection.prepareStatement(query)) {

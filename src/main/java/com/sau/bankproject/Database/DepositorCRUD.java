@@ -36,7 +36,6 @@ public class DepositorCRUD {
     }
 
     // Müşteriye hesap bağla
-    // -1: zaten var, -2: accountid yok, 1: başarılı
     public int addDepositor(int customerId, int accountId) {
         // Zaten var mı kontrol et
         String checkQuery = "SELECT 1 FROM \"depositors\" WHERE customer_id = ? AND account_id = ?";

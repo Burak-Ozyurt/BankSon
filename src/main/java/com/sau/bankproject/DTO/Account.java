@@ -3,7 +3,7 @@ package com.sau.bankproject.DTO;
 public class Account {
     private int id;
     private String branch;
-    private double balance; // Parasal değerler için double veya BigDecimal daha uygundur
+    private double balance;
 
     // Boş Constructor
     public Account() {
@@ -41,7 +41,7 @@ public class Account {
         this.balance = balance;
     }
 
-    // toString Metodu (Hata ayıklama için kullanışlıdır)
+    // toString Metodu 
     @Override
     public String toString() {
         return "Account{" +

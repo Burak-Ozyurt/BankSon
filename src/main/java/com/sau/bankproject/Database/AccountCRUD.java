@@ -12,8 +12,8 @@ public class AccountCRUD {
     // Bir hesabı ID ile getir
     public Optional<Account> getAccountById(int id) {
         Account account = null;
-        // Tablo adı "account" olarak güncellendi
-        // Daha güvenli olan PreparedStatement kullanıldı
+
+        
         String query = "SELECT * FROM \"account\" WHERE accountid = ?";
 
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS);
@@ -41,7 +41,7 @@ public class AccountCRUD {
             if(getAccountById(account.getId()).isPresent()) {
                 result = -1; // Hesap zaten mevcut
             } else {
-                // Tablo adı "account" olarak güncellendi
+
                 String query = "INSERT INTO \"account\" (accountid, branch, balance) VALUES (?, ?, ?)";
                 try (PreparedStatement pstmt = connection.prepareStatement(query)) {
                     pstmt.setInt(1, account.getId());
@@ -59,7 +59,7 @@ public class AccountCRUD {
     // Hesabı sil
     public int deleteAccountById(int id) {
         int result = 0;
-        // Tablo adı "account" olarak güncellendi ve PreparedStatement kullanıldı
+
         String query = "DELETE FROM \"account\" WHERE accountid = ?";
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS);
              PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -77,7 +77,7 @@ public class AccountCRUD {
         int result = 0;
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
             if(getAccountById(account.getId()).isPresent()) {
-                // Tablo adı "account" olarak güncellendi
+
                 String query = "UPDATE \"account\" SET branch = ?, balance = ? WHERE accountid = ?";
                 try (PreparedStatement pstmt = connection.prepareStatement(query)) {
                     pstmt.setString(1, account.getBranch());
